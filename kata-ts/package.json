@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "start": "ts-node ./src/index.ts",
+    "start": "nodemon",
     "test:watch": "jest --watch",
     "test": "jest"
   },
