@@ -1,18 +1,15 @@
 import { reachTheExit, shortestPath } from "./pathFinder";
 
 describe("path finder #1: can you reach the exit?", () => {
-
   test("basic test #1", () => {
-    const maze =
-`.W.
+    const maze = `.W.
 .W.
 ...`;
     expect(reachTheExit(maze)).toBeTruthy();
   });
 
   test("basic test #2", () => {
-    const maze =
-`.W.
+    const maze = `.W.
 .W.
 W..`;
 
@@ -20,8 +17,7 @@ W..`;
   });
 
   test("basic test #3", () => {
-    const maze =
-`......
+    const maze = `......
 ......
 ......
 ......
@@ -30,10 +26,9 @@ W..`;
 
     expect(reachTheExit(maze)).toBeTruthy();
   });
-    
+
   test("basic test #4", () => {
-    const maze =
-`......
+    const maze = `......
 ......
 ......
 ......
@@ -45,18 +40,15 @@ W..`;
 });
 
 describe("path finder #2: shortest path", () => {
-
   test("basic test #1", () => {
-    const maze =
-`.W.
+    const maze = `.W.
 .W.
 ...`;
     expect(shortestPath(maze)).toBe(4);
   });
 
   test("basic test #2", () => {
-    const maze =
-`.W.
+    const maze = `.W.
 .W.
 W..`;
 
@@ -64,8 +56,7 @@ W..`;
   });
 
   test("basic test #3", () => {
-    const maze =
-`......
+    const maze = `......
 ......
 ......
 ......
@@ -74,10 +65,9 @@ W..`;
 
     expect(shortestPath(maze)).toBe(10);
   });
-    
+
   test("basic test #4", () => {
-    const maze =
-`......
+    const maze = `......
 ......
 ......
 ......
