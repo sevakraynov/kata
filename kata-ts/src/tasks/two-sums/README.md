@@ -8,6 +8,10 @@ You may assume that each input would have **exactly one solution**, and you may 
 
 You can return the answer in any order.
 
+## Дополненное условие
+
+Дан отсортированный массив чисел, найти пару чисел, которая в сумме дате число `target`.
+
 ## Примеры
 
 ```bash
@@ -25,9 +29,3 @@ Output: [1,2]
 Input: nums = [3,3], target = 6
 Output: [0,1]
 ```
-
-## Дополненное условие
-
-Дан отсортированный массив чисел, найти пару чисел, которая в сумме дате число `target`.
-
-_Алгоритмы решают задачу в дополненной постановке_
