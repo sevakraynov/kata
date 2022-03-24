@@ -1,24 +1,23 @@
-import validParentheses from "./validate-parentheses";
+import { validParentheses } from "./validate-parentheses";
 
 describe("valid parentheses tests", () => {
-  test(' "()" return true', () => {
-    expect(validParentheses("()")).toBeTruthy();
-  });
-
-  test(' "())" return false', () => {
-    expect(validParentheses("())")).toBeFalsy();
-  });
-
-  test(' "(()" return false', () => {
-    expect(validParentheses("(()")).toBeFalsy();
-  });
-
-  test(' "(())" return true', () => {
-    expect(validParentheses("(())")).toBeTruthy();
-  });
-
-  test(' "()()" return true', () => {
-    expect(validParentheses("()()")).toBeTruthy();
+  test.each`
+    str         | expected
+    ${"()"}     | ${true}
+    ${"(())"}   | ${true}
+    ${"()()"}   | ${true}
+    ${"())"}    | ${false}
+    ${"(()"}    | ${false}
+    ${"{}()"}   | ${true}
+    ${"[]{}()"} | ${true}
+    ${"[{()}]"} | ${true}
+    ${"[(){}]"} | ${true}
+    ${"[){}]"}  | ${false}
+    ${"[{]"}    | ${false}
+    ${"]"}      | ${false}
+    ${"{"}      | ${false}
+  `("returns $expected when $str passed to function", ({ str, expected }) => {
+    expect(validParentheses(str)).toEqual(expected);
   });
 
   test("empty string return true", () => {
