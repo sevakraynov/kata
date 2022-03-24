@@ -10,16 +10,14 @@ const taskName = argv.task.split(' ').map(s => s.toLowerCase()).join('-');
 const tasksFolder = "./src/tasks";
 
 const tsTemplate =
-`const func = () => { };
-
-export default func;
+`export const func = () => { };
 `
 
 const tsTestTemplate =
-`import func from "./${taskName}";
+`import { func } from "./${taskName}";
 
-describe("func tests", () => {
-  it.todo("first test");
+describe("${taskName}", () => {
+  it.todo("example 1");
 });
 `
 
@@ -29,6 +27,17 @@ const readmeTemplate =
 ## Условие
 
 ## Примеры
+
+\`\`\`bash
+# Пример 1
+
+\`\`\`
+
+\`\`\`bash
+# Пример 2
+
+
+\`\`\`
 `
 
 const dir = `${tasksFolder}/${taskName}`
