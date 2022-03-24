@@ -1,11 +1,12 @@
-const validParentheses = (str: string): boolean => {
-  const openBrackets = "[{(";
-  const closedBrackets = "]})";
+export const validParentheses = (str: string): boolean => {
+  const openBrackets = ["[", "{", "("];
+  const closedBrackets = ["]", "}", ")"];
   const stack: Array<string> = [];
+  const allBrackets = `${[...openBrackets, ...closedBrackets].join()}`;
 
   for (let i = 0; i < str.length; i++) {
     const letter = str[i];
-    if (`${openBrackets}${closedBrackets}`.indexOf(letter) < 0) continue;
+    if (allBrackets.indexOf(letter) < 0) continue;
     if (openBrackets.indexOf(letter) !== -1) {
       stack.push(letter);
     } else {
@@ -14,7 +15,7 @@ const validParentheses = (str: string): boolean => {
       }
 
       const top = stack.pop();
-      if (top && openBrackets.indexOf(top) > -1 && closedBrackets.indexOf(letter) === -1) {
+      if (top && openBrackets.indexOf(top) !== closedBrackets.indexOf(letter)) {
         return false;
       }
     }
@@ -22,5 +23,3 @@ const validParentheses = (str: string): boolean => {
 
   return stack.length === 0;
 };
-
-export default validParentheses;
