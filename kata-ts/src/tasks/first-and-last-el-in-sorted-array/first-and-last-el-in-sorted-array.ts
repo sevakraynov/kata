@@ -1,39 +1,32 @@
 export const searchRange = (nums: number[], target: number): number[] => {
-  return [findStartIndex(nums, target), findEndIndex(nums, target)];
+  return [search(nums, target, true), search(nums, target, false)];
 };
 
-const findEndIndex = (nums: number[],target: number): number => {
-  let index = -1;
-  let start = 0, end = nums.length - 1;
+const search = (nums: number[], target: number, fromLeftToRight: boolean) => {
+  let i = -1;
+  let start = 0,
+    end = nums.length - 1;
 
-  while(start <= end) {
-    let middleIndex = start + Math.round((end - start) * 0.5);
-    if(target >= nums[middleIndex]) {
-      start = middleIndex + 1;
-    } else {
-      end = middleIndex - 1;
+  while (start <= end) {
+    let m = start + Math.round((end - start) * 0.5);
+    if (target < nums[m]) {
+      end = m - 1;
     }
 
-    if(target == nums[middleIndex]) index = middleIndex;
-  }
-
-  return index;
-}
-
-const findStartIndex = (nums: number[],target: number): number => {
-  let index = -1;
-  let start = 0, end = nums.length - 1;
-
-  while(start <= end) {
-    let middleIndex = start + Math.round((end - start) * 0.5);
-    if(target <= nums[middleIndex]) {
-      end = middleIndex - 1;
-    } else {
-      start = middleIndex + 1;
+    if (target > nums[m]) {
+      start = m + 1;
     }
 
-    if(target == nums[middleIndex]) index = middleIndex;
+    if (target === nums[m]) {
+      i = m;
+
+      if (fromLeftToRight) {
+        end = m - 1;
+      } else {
+        start = m + 1;
+      }
+    }
   }
 
-  return index;
-}
+  return i;
+};
