@@ -1,19 +1,17 @@
-﻿using Kata.Tasks.BreakCamelCase;
-using Xunit;
+﻿using FluentAssertions;
+using Kata.Tasks.BreakCamelCase;
+using NUnit.Framework;
 
-namespace Kata.Test.BreakCamelCaseTests
+namespace Kata.Test.BreakCamelCaseTests;
+
+/// <summary>
+/// Тесты для задачи <see cref="BreakCamelCase"/>
+/// </summary>
+public class BreakCamelCaseTest
 {
-	/// <summary>
-	/// Тесты для задачи <see cref="BreakCamelCase"/>
-	/// </summary>
-	public class BreakCamelCaseTest
-	{
-		[Theory]
-		[InlineData("camelCasing", "camel Casing")]
-		[InlineData("camelCasingTest", "camel Casing Test")]
-		public void TestBreakCamelCase(string str, string expected)
-		{
-			Assert.Equal(expected, BreakCamelCase.Break(str));
-		}
-    }
+    [Test]
+    [TestCase("camelCasing", "camel Casing")]
+    [TestCase("camelCasingTest", "camel Casing Test")]
+    public void TestBreakCamelCase(string str, string expected)
+        => expected.Should().Be(BreakCamelCase.Break(str));
 }
