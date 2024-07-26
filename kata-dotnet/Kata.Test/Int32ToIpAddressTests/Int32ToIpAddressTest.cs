@@ -1,20 +1,22 @@
+Ôªøusing FluentAssertions;
 using Kata.Tasks.Int32ToIpAddress;
-using Xunit;
+using NUnit.Framework;
 
-namespace Kata.Test.Int32ToIpAddressTests
+namespace Kata.Test.Int32ToIpAddressTests;
+
+/// <summary>
+/// –¢–µ—Å—Ç—ã –¥–ª—è –∑–∞–¥–∞—á–∏ <see cref="Int32ToIpAddress"/>
+/// </summary>
+public class Int32ToIpAddressTest
 {
-    /// <summary>
-    /// “ÂÒÚ˚ ‰Îˇ Á‡‰‡˜Ë <see cref="Int32ToIpAddress"/>
-    /// </summary>
-    public class Int32ToIpAddressTest
+    [Test]
+    [TestCase((uint)32, "0.0.0.32")]
+    [TestCase(2154959208, "128.114.17.104")]
+    [TestCase((uint)0, "0.0.0.0")]
+    [TestCase(2149583361, "128.32.10.1")]
+    public void ConvertTest(uint number, string ip)
     {
-        [Fact]
-        public void ConvertTest()
-        {
-            Assert.Equal("0.0.0.32", new Int32ToIpAddress(32).ConvertInt32ToIp());
-            Assert.Equal("128.114.17.104", new Int32ToIpAddress(2154959208).ConvertInt32ToIp());
-            Assert.Equal("0.0.0.0", new Int32ToIpAddress(0).ConvertInt32ToIp());
-            Assert.Equal("128.32.10.1", new Int32ToIpAddress(2149583361).ConvertInt32ToIp());
-        }
+        var intToIp = new Int32ToIpAddress(number);
+        intToIp.ConvertInt32ToIp().Should().Be(ip);
     }
 }
