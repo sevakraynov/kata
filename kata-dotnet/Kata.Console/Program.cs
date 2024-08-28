@@ -6,7 +6,7 @@ using System.Reflection.Metadata;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
-ConsoleEx.Debugify(new Solution().ProductExceptSelf(new int[] { 1, 2, 3, 4 }));
+new Solution().CanReach(new int[] { 4, 2, 3, 0, 3, 1, 2 }, 5);
 
 public static class ConsoleEx
 {
@@ -386,7 +386,6 @@ public class Solution
         }
     }
 
-
     public int[] AsteroidCollision(int[] asteroids)
     {
         var stack = new Stack<int>();
@@ -645,5 +644,149 @@ public class Solution
         }
 
         return total >= 0 ? position + 1 : -1;
+    }
+
+    public void Rotate(int[] nums, int k)
+    {
+        var l = k % nums.Length;
+        Reverse(0, nums.Length - 1);
+        Reverse(0, l - 1);
+        Reverse(l, nums.Length - 1);
+
+        void Reverse(int left, int right)
+        {
+            while (left <= right)
+            {
+                (nums[left], nums[right]) = (nums[right], nums[left]);
+                left++;
+                right--;
+            }
+        }
+    }
+
+    public int MinDominoRotations(int[] tops, int[] bottoms)
+    {
+        var length = tops.Length;
+        var founded = false;
+        var max = tops.Length + 1;
+        var answer = max;
+
+        for (var v = 1; v < 7; v++)
+        {
+            var findRotationsCount = FindRotationsCount(v);
+            if (findRotationsCount == -1)
+            {
+                continue;
+            }
+
+            answer = Math.Min(answer, findRotationsCount);
+            founded = true;
+        }
+
+        return founded ? answer : -1;
+
+        int FindRotationsCount(int value)
+        {
+            var topRotations = 0;
+            var bottomRotations = 0;
+
+            for (var i = 0; i < length; i++)
+            {
+                if (tops[i] != value && bottoms[i] != value)
+                {
+                    return -1;
+                }
+
+                if (tops[i] != value)
+                {
+                    topRotations++;
+                }
+                else if (bottoms[i] != value)
+                {
+                    bottomRotations++;
+                }
+            }
+
+            return Math.Min(topRotations, bottomRotations);
+        }
+    }
+
+    public int NumSubarrayProductLessThanK(int[] nums, int k)
+    {
+        if (k <= 1)
+        {
+            return 0;
+        }
+
+        var count = 0;
+        var left = 0;
+        var prod = 1;
+
+        for (var right = 0; right < nums.Length; right++)
+        {
+            prod *= nums[right];
+            while (prod >= k)
+            {
+                prod /= nums[left];
+                left++;
+            }
+
+            count += right - left + 1;
+        }
+
+        return count;
+    }
+
+    public bool CanReach(int[] arr, int start)
+    {
+        var n = arr.Length;
+        var visitedPositions = new bool[n];
+        var queue = new Queue<int>();
+
+        queue.Enqueue(start);
+
+        while (queue.Count > 0)
+        {
+            var currentPosition = queue.Dequeue();
+            visitedPositions[currentPosition] = true;
+
+            if (arr[currentPosition] == 0)
+            {
+                return true;
+            }
+
+            var leftJumpPosition = currentPosition - arr[currentPosition];
+            var rightJumpPosition = currentPosition + arr[currentPosition];
+
+            if (leftJumpPosition >= 0 && leftJumpPosition < n)
+            {
+                if (!visitedPositions[leftJumpPosition])
+                {
+                    queue.Enqueue(leftJumpPosition);
+                }
+            }
+
+            if (rightJumpPosition >= 0 && rightJumpPosition < n)
+            {
+                if (!visitedPositions[rightJumpPosition])
+                {
+                    queue.Enqueue(rightJumpPosition);
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public int FindPairs(int[] nums, int k)
+    {
+        if (nums.Length == 0 || k < 0)
+        {
+            return 0;
+        }
+
+        var dictionary = nums.GroupBy(q => q).ToDictionary(q => q.Key, q => q.Count());
+
+        return k == 0 ? dictionary.Count(q => q.Value >= 2) : dictionary.Count(q => dictionary.ContainsKey(q.Key + k));
     }
 }
