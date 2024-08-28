@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Reflection.Metadata;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
-new Solution().CanReach(new int[] { 4, 2, 3, 0, 3, 1, 2 }, 5);
+new Solution().FindShortestSubArray(new int[] { 1, 2, 2, 3, 1 });
 
 public static class ConsoleEx
 {
@@ -788,5 +789,99 @@ public class Solution
         var dictionary = nums.GroupBy(q => q).ToDictionary(q => q.Key, q => q.Count());
 
         return k == 0 ? dictionary.Count(q => q.Value >= 2) : dictionary.Count(q => dictionary.ContainsKey(q.Key + k));
+    }
+
+    public int FindShortestSubArray(int[] nums)
+    {
+        var counters = nums.GroupBy(q => q).ToDictionary(q => q.Key, q => q.Count());
+        var degree = counters.Values.Max();
+        var left = new Dictionary<int, int>();
+        var right = new Dictionary<int, int>();
+
+        for (var i = 0; i < nums.Length; i++)
+        {
+            var current = nums[i];
+            if (!left.ContainsKey(current))
+            {
+                left[current] = i;
+            }
+
+            right[current] = i;
+        }
+
+        var answer = nums.Length + 1;
+        foreach ((var i, var counter) in counters)
+        {
+            if (counter == degree)
+            {
+                answer = Math.Min(answer, right[i] - left[i] + 1);
+            }
+        }
+
+        return answer;
+    }
+
+    public int MajorityElement(int[] nums)
+    {
+        var counter = 0;
+        var major = 0;
+
+        foreach (var num in nums)
+        {
+            if (counter == 0)
+            {
+                major = num;
+                counter = 1;
+                continue;
+            }
+
+            if (major == num)
+            {
+                counter++;
+            }
+            else
+            {
+                counter--;
+            }
+        }
+
+        return major;
+    }
+
+    public int Rob(int[] nums)
+    {
+        return nums.Length == 1 ? nums[0] : Math.Max(RobRange(0, nums.Length - 1), RobRange(1, nums.Length));
+
+        int RobRange(int start, int finish)
+        {
+            var prev1 = 0;
+            var prev2 = 0;
+
+            for (var index = start; index < finish; index++)
+            {
+                var robNext = Math.Max(prev1, prev2 + nums[index]);
+                prev2 = prev1;
+                prev1 = robNext;
+            }
+
+            return Math.Max(prev1, prev2);
+        }
+    }
+
+    public int MaxProduct(int[] nums)
+    {
+        var min = 1;
+        var max = 1;
+        var result = nums[0];
+
+        foreach (var num in nums)
+        {
+            var tmp = max * num;
+            max = Math.Max(num, Math.Max(tmp, min * num));
+            min = Math.Min(num, Math.Min(tmp, min * num));
+            result = Math.Max(result, max);
+        }
+
+        return result;
     }
 }
