@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
-new Solution().FindShortestSubArray(new int[] { 1, 2, 2, 3, 1 });
+ConsoleEx.Debugify(new Solution().AddToArrayForm(new int[] { 9, 9, 9, 9, 9, 9, 9, 9, 9, 9 }, 1));
 
 public static class ConsoleEx
 {
@@ -883,5 +884,222 @@ public class Solution
         }
 
         return result;
+    }
+
+    public IList<IList<string>> GroupAnagrams(string[] strs)
+    {
+        var dictionary = new Dictionary<string, IList<string>>();
+        foreach (var str in strs)
+        {
+            var key = SortString(str);
+            if (dictionary.TryGetValue(key, out var list))
+            {
+                list.Add(str);
+            }
+            else
+            {
+                dictionary[key] = new List<string> { str };
+            }
+        }
+
+        return dictionary.Values.ToArray();
+
+        string SortString(string str)
+        {
+            var chars = str.ToCharArray();
+            Array.Sort(chars);
+            return new string(chars);
+        }
+    }
+
+    public bool Find132pattern(int[] nums)
+    {
+        var possible3rd = new Stack<int>();
+        var max3rdNum = int.MinValue;
+
+        for (var i = nums.Length - 1; i >= 0; i--)
+        {
+            var item = nums[i];
+
+            if (item < max3rdNum)
+            {
+                return true;
+            }
+
+            while (possible3rd.Count > 0 && possible3rd.Peek() < item)
+            {
+                max3rdNum = possible3rd.Pop();
+            }
+
+            possible3rd.Push(item);
+        }
+
+        return false;
+    }
+
+    public int LengthOfLongestSubstring_New(string s)
+    {
+        var hash = new HashSet<char>();
+        var left = 0;
+        var right = 0;
+        var answer = 0;
+
+        while (right < s.Length)
+        {
+            var item = s[right];
+            if (!hash.Contains(item))
+            {
+                hash.Add(item);
+                answer = Math.Max(answer, right - left + 1);
+                right++;
+            }
+            else
+            {
+                hash.Remove(s[left]);
+                left++;
+            }
+        }
+
+        return answer;
+    }
+
+    public int FirstMissingPositive(int[] nums)
+    {
+        var j = 0;
+        var numsLength = nums.Length;
+
+        for (var i = 0; i < numsLength; i++)
+        {
+            var item = nums[i];
+            if (item <= 0)
+            {
+                (nums[j], nums[i]) = (nums[i], nums[j]);
+                j++;
+            }
+        }
+
+        for (var i = j; i < numsLength; i++)
+        {
+            var num = Math.Abs(nums[i]);
+            if (num <= numsLength - j && nums[num - 1 + j] > 0)
+            {
+                nums[num - 1 + j] *= -1;
+            }
+        }
+
+        for (var i = j; i < numsLength; i++)
+        {
+            if (nums[i] > 0)
+            {
+                return i - j + 1;
+            }
+        }
+
+        return numsLength - j + 1;
+    }
+
+    public int[] MaxSlidingWindow(int[] nums, int k)
+    {
+        var maxValues = new List<int>();
+
+        var deque = new List<int>();
+
+        for (var i = 0; i < nums.Length; i++)
+        {
+            if (deque.Count > 0 && deque[0] < i - k + 1)
+            {
+                deque.RemoveAt(0);
+            }
+
+            while (deque.Count > 0 && nums[deque[^1]] <= nums[i])
+            {
+                deque.RemoveAt(deque.Count - 1);
+            }
+
+            deque.Add(i);
+
+            if (i >= k - 1)
+            {
+                maxValues.Add(nums[deque[0]]);
+            }
+        }
+
+        return maxValues.ToArray();
+    }
+
+    public IList<int> AddToArrayForm(int[] num, int k)
+    {
+        var carry = k;
+        for (var i = num.Length - 1; i >= 0; i--)
+        {
+            var sum = carry + num[i];
+
+            carry = sum / 10;
+            var d = sum % 10;
+
+            num[i] = d;
+        }
+
+        if (carry <= 0)
+        {
+            return num;
+        }
+
+        var carryList = new Stack<int>();
+        for (var i = num.Length - 1; i >= 0; i--)
+        {
+            carryList.Push(num[i]);
+        }
+
+        while (carry > 0)
+        {
+            carryList.Push(carry % 10);
+            carry /= 10;
+        }
+
+        return carryList.ToArray();
+    }
+
+    public int MySqrt(int x)
+    {
+        var left = 1;
+        var right = x;
+
+        while (left <= right)
+        {
+            var mid = left + (right - left) / 2;
+            var sqrt = x / mid;
+
+            if (sqrt == mid)
+            {
+                return mid;
+            }
+
+            if (sqrt < mid)
+            {
+                right = mid - 1;
+            }
+            else
+            {
+                left = mid + 1;
+            }
+        }
+
+        return right;
+    }
+
+    public int MissingNumber(int[] nums)
+    {
+        var x = nums.Length;
+
+        for (var i = 0; i < nums.Length; i++)
+        {
+            x ^= i ^ nums[i];
+        }
+
+        return x;
+
+        // arithmetic progression with one missing element
+        // nums.Length * (nums.Length + 1) / 2 - nums.Sum();
     }
 }
