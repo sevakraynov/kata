@@ -8,8 +8,9 @@ using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using Microsoft.VisualBasic;
 
-ConsoleEx.Debugify(new Solution().ZigzagLevelOrder(BuildTreeFromString("[1, 2, 3, 4, null, null, 5]")));
+new Solution().RangeSumBST(BuildTreeFromString("[10,5,15,3,7,null,18]"), 7, 15);
 
 List<int?> ParseTreeNodeStrIntoValueArray(string treeNodeStr)
 {
@@ -1417,7 +1418,7 @@ public class Solution
 
         stack.Push(root);
 
-        for (int i = 1; i < preorder.Length; i++)
+        for (var i = 1; i < preorder.Length; i++)
         {
             TreeNode? lastStack = null;
             while (stack.Count > 0 && stack.Peek().val < preorder[i])
@@ -1441,4 +1442,127 @@ public class Solution
         return root;
     }
 
+    // https://leetcode.com/problems/diameter-of-binary-tree/description/
+    public int DiameterOfBinaryTree(TreeNode? root)
+    {
+        var answer = 0;
+
+        FindDiameter(root);
+
+        return answer;
+
+        int FindDiameter(TreeNode? node)
+        {
+            if (node == null)
+            {
+                return 0;
+            }
+
+            var left = FindDiameter(node.left);
+            var right = FindDiameter(node.right);
+            answer = Math.Max(left + right, answer);
+
+            return 1 + Math.Max(left, right);
+        }
+    }
+
+    // https://leetcode.com/problems/range-sum-of-bst/description/
+    public int RangeSumBST(TreeNode? root, int low, int high)
+    {
+        var sum = 0;
+
+        if (root == null)
+        {
+            return sum;
+        }
+
+        var stack = new Stack<TreeNode>();
+        stack.Push(root);
+
+        while (stack.Count > 0)
+        {
+            var node = stack.Pop();
+
+            if (node.val >= low && node.val <= high)
+            {
+                sum += node.val;
+            }
+
+            if (node.right != null)
+            {
+                stack.Push(node.right);
+            }
+
+            if (node.left != null)
+            {
+                stack.Push(node.left);
+            }
+        }
+
+        return sum;
+    }
+
+    public bool IsSameTree(TreeNode? p, TreeNode? q)
+    {
+        if (p == null && q == null)
+        {
+            return true;
+        }
+
+        if (p == null || q == null)
+        {
+            return false;
+        }
+
+        // Best solution imho
+        return (p.val == q.val) && IsSameTree(p.left, q.left) && IsSameTree(p.right, q.right);
+
+        var stackP = new Stack<TreeNode>();
+        stackP.Push(p);
+
+        var stackQ = new Stack<TreeNode>();
+        stackQ.Push(q);
+
+        while (stackP.Count > 0 || stackQ.Count > 0)
+        {
+            var nodeP = stackP.Pop();
+            var nodeQ = stackQ.Pop();
+
+            if (IsInCorrectNode(nodeP, nodeQ))
+            {
+                return false;
+            }
+
+            AddToStack(stackP, nodeP.right);
+            AddToStack(stackP, nodeP.left);
+
+            AddToStack(stackQ, nodeQ.right);
+            AddToStack(stackQ, nodeQ.left);
+        }
+
+        return stackP.Count == 0 && stackQ.Count == 0;
+
+        bool IsInCorrectNode(TreeNode pp, TreeNode qq)
+        {
+            if (pp.val != qq.val)
+            {
+                return true;
+            }
+
+            if ((pp.left == null || qq.left == null) && (pp.left != null || qq.left != null))
+            {
+                return true;
+            }
+
+            return (pp.right == null || qq.right == null) && (pp.right != null || qq.right != null);
+        }
+
+        void AddToStack(Stack<TreeNode> stack, TreeNode? node)
+        {
+            if (node != null)
+            {
+                stack.Push(node);
+            }
+        }
+    }
 }
