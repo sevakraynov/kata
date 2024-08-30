@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel.DataAnnotations;
@@ -8,7 +9,60 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
-ConsoleEx.Debugify(new Solution().AddToArrayForm(new int[] { 9, 9, 9, 9, 9, 9, 9, 9, 9, 9 }, 1));
+ConsoleEx.Debugify(new Solution().ZigzagLevelOrder(BuildTreeFromString("[1, 2, 3, 4, null, null, 5]")));
+
+List<int?> ParseTreeNodeStrIntoValueArray(string treeNodeStr)
+{
+    List<int?> valueArray = new();
+
+    treeNodeStr = treeNodeStr.ToLower();
+    var valueListStr = treeNodeStr.Trim(' ', '[', ']');
+
+    if (valueListStr.Length == 0)
+    {
+        return valueArray;
+    }
+
+    var valueStrArray = valueListStr.Split(",").ToArray();
+    foreach (var value in valueStrArray)
+    {
+        var str = value.Trim();
+        if (str == "null")
+        {
+            valueArray.Add(null);
+        }
+        else
+        {
+            var number = int.Parse(str);
+            valueArray.Add(number);
+        }
+    }
+
+    return valueArray;
+}
+
+TreeNode? BuildTree(IReadOnlyList<int?> array, int i, int n)
+{
+    TreeNode? root = null;
+    if (i >= n || !array[i].HasValue)
+    {
+        return root;
+    }
+
+    root = new TreeNode(array[i]!.Value)
+    {
+        left = BuildTree(array, 2 * i + 1, n),
+        right = BuildTree(array, 2 * i + 2, n)
+    };
+
+    return root;
+}
+
+TreeNode? BuildTreeFromString(string str)
+{
+    var list = ParseTreeNodeStrIntoValueArray(str);
+    return BuildTree(list, 0, list.Count);
+}
 
 public static class ConsoleEx
 {
@@ -20,13 +74,18 @@ public static class ConsoleEx
 // Console.WriteLine(new Solution().ReverseString(2.0, 2));
 
 
-public class Node
+public class TreeNode
 {
-    public int Value { get; set; }
+    public int val;
+    public TreeNode? left;
+    public TreeNode? right;
 
-    public int Left { get; set; }
-
-    public int Right { get; set; }
+    public TreeNode(int val = 0, TreeNode? left = null, TreeNode? right = null)
+    {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 
@@ -1102,4 +1161,284 @@ public class Solution
         // arithmetic progression with one missing element
         // nums.Length * (nums.Length + 1) / 2 - nums.Sum();
     }
+
+    // https://leetcode.com/problems/count-complete-tree-nodes/
+    public int CountNodes(TreeNode? root)
+    {
+        var queue = new Queue<TreeNode>();
+        var node = root;
+
+        if (node != null)
+        {
+            queue.Enqueue(node);
+        }
+
+        var count = 0;
+
+        while (queue.Count > 0)
+        {
+            node = queue.Dequeue();
+
+            count++;
+
+            if (node.left != null)
+            {
+                queue.Enqueue(node.left);
+            }
+
+            if (node.right != null)
+            {
+                queue.Enqueue(node.right);
+            }
+        }
+
+        return count;
+        // var stack = new Stack<TreeNode>();
+        // var node = root;
+        //
+        // var count = 0;
+        //
+        // while (stack.Count > 0 || node != null)
+        // {
+        //     if (node != null)
+        //     {
+        //         stack.Push(node);
+        //         node = node.left;
+        //     }
+        //     else
+        //     {
+        //         node = stack.Pop();
+        //
+        //         count++;
+        //
+        //         node = node.right;
+        //     }
+        // }
+        //
+        // return count;
+    }
+
+    // https://leetcode.com/problems/binary-tree-paths/
+    public IList<string> BinaryTreePaths(TreeNode? root)
+    {
+        var paths = new List<string>();
+        var stack = new Stack<TreeNode>();
+        var currentPaths = new Stack<string>();
+
+        if (root == null)
+        {
+            return paths;
+        }
+
+        stack.Push(root);
+        currentPaths.Push("");
+
+        while (stack.Count > 0)
+        {
+            var node = stack.Pop();
+            var currentPath = currentPaths.Pop();
+
+            if (node.left == null && node.right == null)
+            {
+                paths.Add(currentPath + node.val);
+                continue;
+            }
+
+            var path = currentPath + node.val + "->";
+
+            if (node.left != null)
+            {
+                stack.Push(node.left);
+                currentPaths.Push(path);
+            }
+
+            if (node.right != null)
+            {
+                stack.Push(node.right);
+                currentPaths.Push(path);
+            }
+        }
+
+        return paths;
+    }
+
+    // https://leetcode.com/problems/binary-tree-preorder-traversal/
+    public IList<int> PreorderTraversal(TreeNode? root)
+    {
+        var paths = new List<int>();
+        var stack = new Stack<TreeNode>();
+
+        if (root == null)
+        {
+            return paths;
+        }
+
+        stack.Push(root);
+
+        while (stack.Count > 0)
+        {
+            var node = stack.Pop();
+            paths.Add(node.val);
+
+            if (node.right != null)
+            {
+                stack.Push(node.right);
+            }
+
+            if (node.left != null)
+            {
+                stack.Push(node.left);
+            }
+        }
+
+        return paths;
+    }
+
+    // https://leetcode.com/problems/binary-tree-level-order-traversal/description/
+    public IList<IList<int>> LevelOrder(TreeNode? root)
+    {
+        var stack = new Stack<(TreeNode, int)>();
+
+        if (root == null)
+        {
+            return new List<IList<int>>();
+        }
+
+        stack.Push((root, 0));
+
+        var dictionary = new List<IList<int>>();
+
+        while (stack.Count > 0)
+        {
+            (var node, var level) = stack.Pop();
+
+            if (dictionary.Count == level)
+            {
+                dictionary.Add(new List<int>());
+            }
+
+            dictionary[level].Add(node.val);
+
+            var nextLevel = level + 1;
+
+            if (node.right != null)
+            {
+                stack.Push((node.right, nextLevel));
+            }
+
+            if (node.left != null)
+            {
+                stack.Push((node.left, nextLevel));
+            }
+        }
+
+        return dictionary;
+    }
+
+    // https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/
+    public IList<IList<int>> ZigzagLevelOrder(TreeNode? root)
+    {
+        var stack = new Stack<(TreeNode, int)>();
+
+        if (root == null)
+        {
+            return new List<IList<int>>();
+        }
+
+        stack.Push((root, 0));
+
+        var result = new List<IList<int>>();
+
+        while (stack.Count > 0)
+        {
+            (var node, var level) = stack.Pop();
+
+            if (result.Count == level)
+            {
+                result.Add(new List<int>());
+            }
+
+            if (level % 2 == 0)
+            {
+                result[level].Add(node.val);
+            }
+            else
+            {
+                result[level].Insert(0, node.val);
+            }
+
+            var nextLevel = level + 1;
+
+            if (node.right != null)
+            {
+                stack.Push((node.right, nextLevel));
+            }
+
+            if (node.left != null)
+            {
+                stack.Push((node.left, nextLevel));
+            }
+        }
+
+        return result;
+    }
+
+    // https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/
+    public TreeNode? SortedArrayToBST(int[] nums)
+        => nums.Length == 0 ? null : BuildTreeBySorted(nums, 0, nums.Length - 1);
+
+    private TreeNode? BuildTreeBySorted(int[] nums, int left, int right)
+    {
+        if (left > right)
+        {
+            return null;
+        }
+
+        var mid = left + (right - left) / 2;
+        var node = new TreeNode(nums[mid])
+        {
+            left = BuildTreeBySorted(nums, left, mid - 1),
+            right = BuildTreeBySorted(nums, mid + 1, right)
+        };
+        return node;
+    }
+
+    // https://leetcode.com/problems/construct-binary-search-tree-from-preorder-traversal
+    public TreeNode? BstFromPreorder(int[] preorder)
+    {
+        if (preorder.Length == 0)
+        {
+            return null;
+        }
+
+        var stack = new Stack<TreeNode>();
+
+        var root = new TreeNode(preorder[0]);
+
+        stack.Push(root);
+
+        for (int i = 1; i < preorder.Length; i++)
+        {
+            TreeNode? lastStack = null;
+            while (stack.Count > 0 && stack.Peek().val < preorder[i])
+            {
+                lastStack = stack.Pop();
+            }
+
+            if (lastStack != null)
+            {
+                lastStack.right = new TreeNode(preorder[i]);
+                stack.Push(lastStack.right);
+            }
+            else
+            {
+                var peek = stack.Peek();
+                peek.left = new TreeNode(preorder[i]);
+                stack.Push(peek.left);
+            }
+        }
+
+        return root;
+    }
+
 }
