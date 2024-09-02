@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Reflection.Metadata;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using Microsoft.VisualBasic;
 
-new Solution().RangeSumBST(BuildTreeFromString("[10,5,15,3,7,null,18]"), 7, 15);
+ConsoleEx.Debugify(
+    new Solution().IntersectSortedArrays(
+        new[] { 2, 2, 5, 8, 14, 19, 29, 30 },
+        new[] { -3, 0, 1, 2, 2, 2, 8, 19 }));
 
 List<int?> ParseTreeNodeStrIntoValueArray(string treeNodeStr)
 {
@@ -1502,67 +1498,127 @@ public class Solution
         return sum;
     }
 
+    // https://leetcode.com/problems/same-tree/
     public bool IsSameTree(TreeNode? p, TreeNode? q)
     {
-        if (p == null && q == null)
-        {
-            return true;
-        }
-
-        if (p == null || q == null)
-        {
-            return false;
-        }
-
         // Best solution imho
-        return (p.val == q.val) && IsSameTree(p.left, q.left) && IsSameTree(p.right, q.right);
+        // return (p.val == q.val) && IsSameTree(p.left, q.left) && IsSameTree(p.right, q.right);
 
-        var stackP = new Stack<TreeNode>();
-        stackP.Push(p);
+        var queue = new Queue<(TreeNode?, TreeNode?)>();
+        queue.Enqueue((p, q));
 
-        var stackQ = new Stack<TreeNode>();
-        stackQ.Push(q);
-
-        while (stackP.Count > 0 || stackQ.Count > 0)
+        while (queue.Count > 0)
         {
-            var nodeP = stackP.Pop();
-            var nodeQ = stackQ.Pop();
+            (var nodeP, var nodeQ) = queue.Dequeue();
 
-            if (IsInCorrectNode(nodeP, nodeQ))
+            if (nodeP == null && nodeQ != null || nodeP != null && nodeQ == null)
             {
                 return false;
             }
 
-            AddToStack(stackP, nodeP.right);
-            AddToStack(stackP, nodeP.left);
+            if (nodeP == null || nodeQ == null)
+            {
+                continue;
+            }
 
-            AddToStack(stackQ, nodeQ.right);
-            AddToStack(stackQ, nodeQ.left);
+            if (nodeP.val != nodeQ.val)
+            {
+                return false;
+            }
+
+            queue.Enqueue((nodeP.left, nodeQ.left));
+            queue.Enqueue((nodeP.right, nodeQ.right));
         }
 
-        return stackP.Count == 0 && stackQ.Count == 0;
+        return queue.Count == 0;
+    }
 
-        bool IsInCorrectNode(TreeNode pp, TreeNode qq)
+    // https://leetcode.com/problems/squares-of-a-sorted-array/description/
+    public int[] SortedSquares(int[] nums)
+    {
+        var result = new int[nums.Length];
+        var left = 0;
+        var right = nums.Length - 1;
+        var index = right;
+
+        while (left <= right)
         {
-            if (pp.val != qq.val)
+            if (Math.Abs(nums[left]) > Math.Abs(nums[right]))
             {
-                return true;
+                result[index] = nums[left] * nums[left];
+                left++;
+            }
+            else
+            {
+                result[index] = nums[right] * nums[right];
+                right--;
             }
 
-            if ((pp.left == null || qq.left == null) && (pp.left != null || qq.left != null))
-            {
-                return true;
-            }
-
-            return (pp.right == null || qq.right == null) && (pp.right != null || qq.right != null);
+            index--;
         }
 
-        void AddToStack(Stack<TreeNode> stack, TreeNode? node)
+        return result;
+    }
+
+    // https://leetcode.com/problems/intersection-of-two-arrays/
+    public int[] Intersection(int[] nums1, int[] nums2)
+        => nums1.Intersect(nums2).Distinct().ToArray();
+
+    // https://leetcode.com/problems/intersection-of-two-arrays-ii/
+    public int[] Intersect(int[] nums1, int[] nums2)
+    {
+        var countOfNums = nums1.GroupBy(x => x).ToDictionary(x => x.Key, x => x.Count());
+        var result = new List<int>();
+
+        foreach (var num in nums2)
         {
-            if (node != null)
+            if (countOfNums.TryGetValue(num, out var count) && count > 0)
             {
-                stack.Push(node);
+                result.Add(num);
+                countOfNums[num]--;
             }
         }
+
+        return result.ToArray();
+    }
+
+
+    /* 
+     * https://www.youtube.com/watch?v=6h-blOjL43s&t=6772s
+     * Общие элементы отсортированных массивов.
+     * Найти пересечение двух отсортированных массивов.
+     * Другими словами, для двух отсортированных массивов найти все элементы, которые встречаются в обоих массивах
+     * nums1 = [2,2,5,8,14,19,29,30]
+     * nums2 = [-3,0,1,2,2,2,8,19]
+     * Output: [2,2,8,19]
+     *
+     */
+    public int[] IntersectSortedArrays(int[] nums1, int[] nums2)
+    {
+        var index1 = 0;
+        var index2 = 0;
+        var result = new List<int>();
+
+        while (index1 < nums1.Length && index2 < nums2.Length)
+        {
+            if (nums1[index1] == nums2[index2])
+            {
+                result.Add(nums1[index1]);
+                index1++;
+                index2++;
+                continue;
+            }
+
+            if (nums1[index1] > nums2[index2])
+            {
+                index2++;
+            }
+            else
+            {
+                index1++;
+            }
+        }
+
+        return result.ToArray();
     }
 }
