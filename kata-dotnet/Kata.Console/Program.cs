@@ -5,7 +5,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Xml.Linq;
 using Kata.Console;
 
 
@@ -1695,8 +1697,6 @@ int CheapestWay(int[,] matrix)
     return cost[n - 1, m - 1];
 }
 
-MaximumCost();
-
 // https://coderun.yandex.ru/problem/print-the-route-of-the-maximum-cost
 void MaximumCost()
 {
@@ -1777,4 +1777,97 @@ void MaximumCost()
 
     Console.WriteLine(cost[n - 1, m - 1]);
     Console.WriteLine(string.Join(' ', stack));
+}
+
+
+// https://coderun.yandex.ru/problem/knight-move
+void KnightMove()
+{
+    var firstRow = Console.ReadLine()!.Split(' ');
+    var n = int.Parse(firstRow[0]);
+    var m = int.Parse(firstRow[1]);
+    var fields = new int[n + 1, m + 1];
+    fields[1, 1] = 1;
+
+    for (var i = 2; i <= n; i++)
+    {
+        for (var j = 2; j <= m; j++)
+        {
+            fields[i, j] = fields[i - 1, j - 2] + fields[i - 2, j - 1];
+        }
+    }
+
+    Console.WriteLine(fields[n, m]);
+}
+
+Cafe();
+
+// https://coderun.yandex.ru/problem/cafe
+void Cafe()
+{
+    var n = int.Parse(Console.ReadLine()!);
+    var N = n + 1;
+    var array = new int[N];
+    const int inf = (int)1e9;
+
+    for (var i = 1; i <= n; i++)
+    {
+        array[i] = int.Parse(Console.ReadLine()!);
+    }
+
+    var dp = new int[N, N];
+
+    for (int i = 0; i <= n; i++)
+    {
+        for (int j = 0; j <= n; j++)
+        {
+            dp[i, j] = inf;
+        }
+    }
+
+
+    dp[0, 0] = 0;
+    for (int i = 1; i <= n; i++)
+    {
+        for (int j = 0; j <= i; j++)
+        {
+            dp[i, j] = Math.Min(dp[i, j], dp[i - 1, j] + array[i]);
+            if (array[i] > 100)
+            {
+                dp[i, j + 1] = Math.Min(dp[i, j + 1], dp[i - 1, j] + array[i]);
+            }
+
+            if (j >= 1)
+            {
+                dp[i, j - 1] = Math.Min(dp[i, j - 1], dp[i - 1, j]);
+            }
+
+            Console.WriteLine();
+            PrintMatrix(dp);
+            Console.WriteLine();
+        }
+    }
+
+    var ans = inf;
+    for (int j = 0; j <= n; j++)
+    {
+        ans = Math.Min(ans, dp[n, j]);
+    }
+
+
+    Console.WriteLine(ans);
+
+    void PrintMatrix(int[,] matrix)
+    {
+        for (int i = 0; i < matrix.GetLength(0); i++)
+        {
+            for (int j = 0; j < matrix.GetLength(1); j++)
+            {
+                Console.Write($"{matrix[i, j]:G}");
+                Console.Write(' ');
+            }
+
+            Console.WriteLine();
+        }
+    }
 }
