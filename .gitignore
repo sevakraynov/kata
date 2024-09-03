@@ -649,3 +649,5 @@ FodyWeavers.xsd
 **/dist
 
 # End of https://www.toptal.com/developers/gitignore/api/aspnetcore,visualstudio,visualstudiocode,node
+
+*.orig

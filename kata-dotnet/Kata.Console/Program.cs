@@ -1,7 +1,10 @@
-﻿using System;
+#pragma warning disable CA1822
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Interval = (int Start, int End);
 
 ConsoleEx.Debugify(
     new Solution().IntersectSortedArrays(
@@ -1621,4 +1624,54 @@ public class Solution
 
         return result.ToArray();
     }
+    // https://coderun.yandex.ru/problem/lite-operating-systems
+    
+    public int OperationSystemsCount(int m, Interval[] sectors)
+    {
+        var s = sectors.OrderBy(q => q.Start).ToArray();
+        var l = new List<Interval>();
+        var accumulator = s.First();
+
+        foreach (var sector in s.Skip(1))
+        {
+            if (sector.Start <= accumulator.End)
+            {
+                accumulator = (accumulator.Start, End: Math.Max(sector.End, accumulator.End));
+            }
+            else
+            {
+                l.Add(accumulator);
+                accumulator = sector;
+            }
+        }
+        
+        return l.Count;
+    }
+
+    // https://leetcode.com/problems/merge-intervals
+    private record Interval(int Start, int End);
+    public int[][] Merge(int[][] intervals)
+    {
+        var nintervals = intervals.Select(q => new Interval(q[0], q[1])).OrderBy(q => q.Start).ToArray();
+        var accumularor = nintervals[0];
+        var result = new List<int[]>();
+
+        foreach (var i in nintervals.Skip(1))
+        {
+            if (i.Start <= accumularor.End)
+            {
+                accumularor = accumularor with { End = Math.Max(accumularor.End, i.End) };
+            }
+            else
+            {
+                result.Add([accumularor.Start, accumularor.End]);
+                accumularor = i;
+            }
+        }
+        
+        result.Add([accumularor.Start, accumularor.End]);
+        
+        return result.ToArray();
+    }
 }
+
