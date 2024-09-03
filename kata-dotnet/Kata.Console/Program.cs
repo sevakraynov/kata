@@ -12,7 +12,7 @@ using Kata.Console;
 
 
 
-// Debugify(IntersectSortedArrays([2, 2, 5, 8, 14, 19, 29, 30], [-3, 0, 1, 2, 2, 2, 8, 19]));
+Debugify(IntersectSortedArrays([2, 2, 5, 8, 14, 19, 29, 30], [-3, 0, 1, 2, 2, 2, 8, 19]));
 
 List<int?> ParseTreeNodeStrIntoValueArray(string treeNodeStr)
 {
@@ -1869,5 +1869,89 @@ void Cafe()
 
             Console.WriteLine();
         }
+    }
+}
+
+
+// https://leetcode.com/problems/validate-binary-search-tree
+bool IsValidBST(TreeNode? root)
+{
+    if (root == null)
+    {
+        return true;
+    }
+
+    var stack = new Stack<TreeNode>();
+    TreeNode? previous = null;
+
+    while (stack.Count > 0 || root is not null)
+    {
+        while (root is not null)
+        {
+            stack.Push(root);
+            root = root.left;
+        }
+        var node = stack.Pop();
+        if (previous != null && previous.val >= node.val)
+        {
+            return false;
+        }
+
+        previous = node;
+        root = node.right;
+    }
+
+    return true;
+}
+
+
+// https://leetcode.com/problems/path-sum/description/
+bool HasPathSum(TreeNode? root, int targetSum)
+{
+    if (root is null)
+    {
+        return false;
+    }
+
+    if (root.left == null && root.right == null)
+    {
+        return targetSum == root.val;
+    }
+    var newTarget = targetSum - root.val;
+    return HasPathSum(root.left, newTarget) || HasPathSum(root.right, newTarget);
+}
+
+// https://youtu.be/R4UHOLZ-bEk?si=VGQlc9bRRj5MZuMY&t=190
+int MaxPathSum_Simple(TreeNode? root, int targetSum)
+{
+    if (root is null)
+    {
+        return 0;
+    }
+
+    var maxLeft = MaxPathSum_Simple(root.left, targetSum - root.val);
+    var maxRight = MaxPathSum_Simple(root.right, targetSum - root.val);
+    return Math.Max(maxLeft, maxRight) + root.val;
+}
+
+// https://youtu.be/R4UHOLZ-bEk?si=335EIzkFHjztk77c&t=698
+// https://leetcode.com/problems/binary-tree-maximum-path-sum/
+int MaxPathSum(TreeNode? root)
+{
+    var answer = int.MinValue;
+    Helper(root);
+
+    return answer;
+    int Helper(TreeNode? node)
+    {
+        if (node == null)
+        {
+            return 0;
+        }
+        var maxLeft = Math.Max(Helper(node.left), 0);
+        var maxRight = Math.Max(Helper(node.right), 0);
+        answer = Math.Max(answer, maxLeft + maxRight + node.val);
+
+        return Math.Max(maxLeft, maxRight) + node.val;
     }
 }
