@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -12,7 +13,7 @@ using Kata.Console;
 
 
 
-Debugify(IntersectSortedArrays([2, 2, 5, 8, 14, 19, 29, 30], [-3, 0, 1, 2, 2, 2, 8, 19]));
+// Debugify(IntersectSortedArrays([2, 2, 5, 8, 14, 19, 29, 30], [-3, 0, 1, 2, 2, 2, 8, 19]));
 
 List<int?> ParseTreeNodeStrIntoValueArray(string treeNodeStr)
 {
@@ -72,6 +73,7 @@ static void Debugify<T>(IEnumerable<T> list, string glue = "\n")
 
 // Console.WriteLine(new Solution().ReverseString(2.0, 2));
 
+// https://leetcode.com/problems/reverse-string/
 void ReverseString(char[] s)
 {
     int left = 0, right = s.Length - 1;
@@ -85,6 +87,7 @@ void ReverseString(char[] s)
     }
 }
 
+// https://leetcode.com/problems/longest-common-prefix
 string LongestCommonPrefix(string[] strs)
 {
     if (strs.Length == 0)
@@ -109,6 +112,7 @@ string LongestCommonPrefix(string[] strs)
     return prefix;
 }
 
+// https://leetcode.com/problems/reverse-words-in-a-string/
 string ReverseWords(string s)
 {
     var sb = new StringBuilder();
@@ -1596,7 +1600,6 @@ int[] IntersectSortedArrays(int[] nums1, int[] nums2)
     return result.ToArray();
 }
 // https://coderun.yandex.ru/problem/lite-operating-systems
-
 int OperationSystemsCount(int m, (int Start, int End)[] sectors)
 {
     var s = sectors.OrderBy(q => q.Start).ToArray();
@@ -1607,7 +1610,7 @@ int OperationSystemsCount(int m, (int Start, int End)[] sectors)
     {
         if (sector.Start <= accumulator.End)
         {
-            accumulator = (accumulator.Start, End: Math.Max(sector.End, accumulator.End));
+            accumulator = accumulator with { End = Math.Max(sector.End, accumulator.End) };
         }
         else
         {
@@ -1800,8 +1803,6 @@ void KnightMove()
     Console.WriteLine(fields[n, m]);
 }
 
-Cafe();
-
 // https://coderun.yandex.ru/problem/cafe
 void Cafe()
 {
@@ -1954,4 +1955,303 @@ int MaxPathSum(TreeNode? root)
 
         return Math.Max(maxLeft, maxRight) + node.val;
     }
+}
+
+// https://leetcode.com/problems/valid-parentheses/description/
+bool IsValid(string s)
+{
+    if (s.Length % 2 != 0)
+    {
+        return false;
+    }
+
+    var brackets = new Dictionary<char, char> { { '{', '}' }, { '(', ')' }, { '[', ']' } };
+    var stack = new Stack<char>();
+    foreach (var symbol in s)
+    {
+        if (brackets.ContainsKey(symbol))
+        {
+            stack.Push(symbol);
+        }
+        else
+        {
+            if (stack.Count == 0)
+            {
+                return false;
+            }
+
+            var lastBracket = stack.Pop();
+            if (symbol != brackets[lastBracket])
+            {
+                return false;
+            }
+        }
+    }
+
+    return stack.Count == 0;
+}
+
+// https://leetcode.com/problems/decode-string/
+string DecodeString(string s)
+{
+    var numStack = new Stack<int>();
+    var stringStack = new Stack<string>();
+    var sb = new StringBuilder();
+    var n = s.Length;
+
+    for (var i = 0; i < n; i++)
+    {
+        if (char.IsDigit(s[i]))
+        {
+            var num = s[i] - '0';
+
+            while (i + 1 < n && char.IsDigit(s[i + 1]))
+            {
+                num = num * 10 + (s[i + 1] - '0');
+                i++;
+            }
+
+            numStack.Push(num);
+            continue;
+        }
+
+        if (s[i] == '[')
+        {
+            stringStack.Push(sb.ToString());
+            sb.Clear();
+            continue;
+        }
+
+        if (s[i] == ']')
+        {
+            var repeat = numStack.Pop();
+            var tempStrBuilder = new StringBuilder();
+            tempStrBuilder.Append(stringStack.Pop());
+
+            for (var r = 0; r < repeat; r++)
+            {
+                tempStrBuilder.Append(sb);
+            }
+
+            sb = tempStrBuilder;
+            continue;
+        }
+
+        sb.Append(s[i]);
+    }
+
+    return sb.ToString();
+}
+
+// https://leetcode.com/problems/number-of-islands/
+int NumIslands(char[][] grid)
+{
+    var n = grid.Length;
+    var m = grid[0].Length;
+    var matrix = new int[n][];
+
+    for (var i = 0; i < n; i++)
+    {
+        matrix[i] = new int[m];
+        for (var j = 0; j < m; j++)
+        {
+            matrix[i][j] = grid[i][j] - '0';
+        }
+    }
+
+
+    var answer = 0;
+
+    for (var i = 0; i < n; i++)
+    {
+        for (var j = 0; j < m; j++)
+        {
+            if (matrix[i][j] == 1)
+            {
+                answer++;
+                Dfs(i, j);
+            }
+        }
+    }
+
+    return answer;
+
+    void Dfs(int sr, int sc)
+    {
+        var queue = new Queue<(int, int)>();
+        queue.Enqueue((sr, sc));
+
+        while (queue.Count > 0)
+        {
+            (var i, var j) = queue.Dequeue();
+            if (i < 0 || j < 0 || i >= n || j >= m || matrix[i][j] == 0)
+            {
+                continue;
+            }
+
+            matrix[i][j] = 0;
+
+            queue.Enqueue((i - 1, j));
+            queue.Enqueue((i + 1, j));
+            queue.Enqueue((i, j - 1));
+            queue.Enqueue((i, j + 1));
+        }
+    }
+}
+
+// https://leetcode.com/problems/is-subsequence/
+bool IsSubsequence(string s, string t)
+{
+    if (string.IsNullOrEmpty(s))
+    {
+        return true;
+    }
+
+    var j = 0;
+    var i = 0;
+    for (i = 0; i < t.Length; i++)
+    {
+        if (t[i] == s[j])
+        {
+            if (j + 1 == s.Length)
+            {
+                return true;
+            }
+
+            j++;
+        }
+    }
+
+    return false;
+}
+
+// https://leetcode.com/problems/valid-palindrome
+bool IsPalindrome(string s)
+{
+    var clearString = new string(s.Where(char.IsLetterOrDigit).Select(char.ToLower).ToArray());
+
+    if (string.IsNullOrEmpty(clearString))
+    {
+        return true;
+    }
+
+    var l = 0;
+    var r = clearString.Length - 1;
+
+    while (l < r)
+    {
+        if (clearString[l] != clearString[r])
+        {
+            return false;
+        }
+        l++;
+        r--;
+    }
+
+    return true;
+}
+
+
+// https://leetcode.com/problems/trapping-rain-water
+int Trap(int[] height)
+{
+    var sum = 0;
+    var left = 0;
+    var right = height.Length - 1;
+    var maxLeft = height[left];
+    var maxRight = height[right];
+
+    while (left < right)
+    {
+        if (maxLeft < maxRight)
+        {
+            left++;
+            maxLeft = Math.Max(maxLeft, height[left]);
+            sum += maxLeft - height[left];
+        }
+        else
+        {
+            right--;
+            maxRight = Math.Max(maxRight, height[right]);
+            sum += maxRight - height[right];
+        }
+    }
+
+    return sum;
+}
+
+ThreeSum([-1, 0, 1, 2, -1, -4]);
+
+// https://leetcode.com/problems/3sum/
+IList<IList<int>> ThreeSum(int[] nums)
+{
+    var result = new List<IList<int>>();
+
+    if (nums.Length < 3)
+    {
+        return result;
+    }
+
+    if (nums.Length == 3)
+    {
+        result.Add(nums);
+        return result;
+    }
+
+    nums = [.. nums.Order()];
+    for (var i = 0; i < nums.Length - 3; i++)
+    {
+        if (i == 0 || i > 0 && nums[i] != nums[i - 1])
+        {
+            var left = i + 1;
+            var right = nums.Length - 1;
+            var sum = -nums[i];
+            while (left < right)
+            {
+                var currentSum = nums[left] + nums[right];
+                if (sum == currentSum)
+                {
+                    result.Add([nums[i], nums[left], nums[right]]);
+
+                    while (left < right && nums[left] == nums[left + 1])
+                    {
+                        left++;
+
+                    }
+                    while (left < right && nums[right] == nums[right - 1])
+                    {
+                        right--;
+                    }
+
+                    left++;
+                    right--;
+                }
+                else if (sum > currentSum)
+                {
+                    left++;
+                }
+                else
+                {
+                    right--;
+                }
+            }
+        }
+    }
+
+    return result;
+}
+
+// https://leetcode.com/problems/maximum-subarray/
+int MaxSubArray(int[] nums)
+{
+    var current = nums[0];
+    var max = nums[0];
+
+    for (int i = 1; i < nums.Length; i++)
+    {
+        current = Math.Max(nums[i], current + nums[i]);
+        max = Math.Max(max, current);
+    }
+
+    return max;
 }
