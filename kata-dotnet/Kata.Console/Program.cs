@@ -11,9 +11,7 @@ using System.Text;
 using System.Xml.Linq;
 using Kata.Console;
 
-
-
-// Debugify(IntersectSortedArrays([2, 2, 5, 8, 14, 19, 29, 30], [-3, 0, 1, 2, 2, 2, 8, 19]));
+#region Helpers
 
 List<int?> ParseTreeNodeStrIntoValueArray(string treeNodeStr)
 {
@@ -71,7 +69,151 @@ TreeNode? BuildTreeFromString(string str)
 static void Debugify<T>(IEnumerable<T> list, string glue = "\n")
     => Console.WriteLine(string.Join(glue, list.Select(x => x?.ToString())));
 
-// Console.WriteLine(new Solution().ReverseString(2.0, 2));
+#endregion
+
+// https://leetcode.com/problems/merge-sorted-array/
+void MergeSortedArray(
+        int[] nums1,
+        int m,
+        int[] nums2,
+        int n)
+{
+    var last = m + n - 1;
+    var i = m - 1;
+    var j = n - 1;
+
+    while (i >= 0 && j >= 0)
+    {
+        if (nums1[i] > nums2[j])
+        {
+            nums1[last] = nums1[i];
+            i--;
+        }
+        else
+        {
+            nums1[last] = nums2[j];
+            j--;
+        }
+
+        last--;
+    }
+
+    while (j >= 0)
+    {
+        nums1[last] = nums2[j];
+        last--;
+        j--;
+    }
+}
+
+// https://leetcode.com/problems/remove-duplicates-from-sorted-array/
+int RemoveDuplicates(int[] nums)
+{
+    var index = 1;
+    for (var i = 1; i < nums.Length; i++)
+    {
+        if (nums[i] == nums[i - 1])
+        {
+            continue;
+        }
+
+        nums[index] = nums[i];
+        index++;
+    }
+
+    return index;
+}
+
+// https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/
+int RemoveDuplicates2(int[] nums)
+{
+    var index = 1;
+    var a = 1;
+    for (var i = 1; i < nums.Length; i++)
+    {
+        if (nums[i] == nums[i - 1])
+        {
+            switch (a)
+            {
+                case 1:
+                    nums[index] = nums[i];
+                    index++;
+                    a++;
+                    continue;
+
+                case 2:
+                    continue;
+            }
+        }
+        else
+        {
+            nums[index] = nums[i];
+            index++;
+            a = 1;
+        }
+    }
+
+    return index;
+}
+
+// https://leetcode.com/problems/remove-element/
+int RemoveElement(int[] nums, int val)
+{
+    var index = 0;
+    for (var i = 0; i < nums.Length; i++)
+    {
+        if (nums[i] == val)
+        {
+            continue;
+        }
+
+        nums[index] = nums[i];
+        index++;
+    }
+
+    return index;
+}
+
+// https://leetcode.com/problems/factorial-trailing-zeroes/description/
+int TrailingZeroes(int n)
+{
+    var count = 0;
+    while (n > 0)
+    {
+        n /= 5;
+        count += n;
+    }
+
+    return count;
+}
+
+// https://leetcode.com/problems/powx-n/
+double MyPow(double x, int n)
+{
+    double ans = 1;
+    long pow = n;
+    if (n < 0)
+    {
+        pow *= -1;
+    }
+
+    while (pow > 0)
+    {
+        if (pow % 2 == 0)
+        {
+            x *= x;
+
+            pow /= 2;
+        }
+        else
+        {
+            ans *= x;
+            pow--;
+        }
+    }
+
+    return n < 0 ? 1.0 / ans : ans;
+}
 
 // https://leetcode.com/problems/reverse-string/
 void ReverseString(char[] s)
@@ -142,6 +284,7 @@ string ReverseWords(string s)
     return sb.ToString();
 }
 
+// https://leetcode.com/problems/longest-substring-without-repeating-characters/
 int LengthOfLongestSubstring(string s)
 {
     var ans = 0;
@@ -162,6 +305,7 @@ int LengthOfLongestSubstring(string s)
     return ans;
 }
 
+// https://leetcode.com/problems/valid-anagram/
 bool IsAnagram(string s, string t)
 {
     if (s.Length != t.Length)
@@ -188,6 +332,7 @@ bool IsAnagram(string s, string t)
     return chars.Count == 0;
 }
 
+// https://leetcode.com/problems/generate-parentheses/
 IList<string> GenerateParenthesis(int n)
 {
     var list = new List<string>();
@@ -219,6 +364,7 @@ IList<string> GenerateParenthesis(int n)
     }
 }
 
+// https://leetcode.com/problems/letter-combinations-of-a-phone-number/
 IList<string> LetterCombinations(string digits)
 {
     var result = new List<string>();
@@ -260,6 +406,7 @@ IList<string> LetterCombinations(string digits)
     }
 }
 
+// https://leetcode.com/problems/subsets/
 IList<IList<int>> Subsets(int[] nums)
 {
     var result = new List<IList<int>>();
@@ -289,6 +436,7 @@ IList<IList<int>> Subsets(int[] nums)
     }
 }
 
+// https://leetcode.com/problems/sort-colors/
 void SortColors(int[] nums)
 {
     int zeros = 0, ones = 0;
@@ -326,6 +474,7 @@ void SortColors(int[] nums)
     }
 }
 
+// https://leetcode.com/problems/two-sum/
 int[] TwoSum(int[] nums, int target)
 {
     var d = new Dictionary<int, int>();
@@ -344,6 +493,7 @@ int[] TwoSum(int[] nums, int target)
     return [];
 }
 
+// https://leetcode.com/problems/length-of-last-word/
 int LengthOfLastWord(string s)
 {
     var length = 0;
@@ -366,6 +516,7 @@ int LengthOfLastWord(string s)
     return length;
 }
 
+// https://leetcode.com/problems/plus-one/
 int[] PlusOne(int[] digits)
 {
     for (var i = digits.Length - 1; i >= 0; i--)
@@ -388,6 +539,7 @@ int[] PlusOne(int[] digits)
     return result;
 }
 
+// https://leetcode.com/problems/jump-game/
 bool CanJump(int[] nums)
 {
     var r = 0;
@@ -404,6 +556,7 @@ bool CanJump(int[] nums)
     return false;
 }
 
+// https://leetcode.com/problems/move-zeroes/
 void MoveZeroes(int[] nums)
 {
     var current = 0;
@@ -423,6 +576,7 @@ void MoveZeroes(int[] nums)
     }
 }
 
+// https://leetcode.com/problems/asteroid-collision/
 int[] AsteroidCollision(int[] asteroids)
 {
     var stack = new Stack<int>();
@@ -459,12 +613,14 @@ int[] AsteroidCollision(int[] asteroids)
     return stack.Reverse().ToArray();
 }
 
+// https://leetcode.com/problems/kids-with-the-greatest-number-of-candies/
 IList<bool> KidsWithCandies(int[] candies, int extraCandies)
 {
     var max = candies.Max();
     return candies.Select(q => q + extraCandies >= max).ToList();
 }
 
+// https://leetcode.com/submissions/detail/1369647865/
 double Average(int[] salary)
 {
     var max = salary.Max();
@@ -473,7 +629,8 @@ double Average(int[] salary)
     return salary.Where(q => q > min && q < max).Average();
 }
 
-int MaxProfit_1(int[] prices)
+// https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
+int MaxProfit(int[] prices)
 {
     if (prices.Length == 0)
     {
@@ -495,7 +652,8 @@ int MaxProfit_1(int[] prices)
     return maxProfit;
 }
 
-int MaxProfit(int[] prices)
+// https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/
+int MaxProfit2(int[] prices)
 {
     if (prices.Length == 0)
     {
@@ -515,6 +673,7 @@ int MaxProfit(int[] prices)
     return maxProfit;
 }
 
+// https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/
 IList<int> FindDisappearedNumbers(int[] nums)
 {
     var b = new bool[nums.Length];
@@ -540,6 +699,26 @@ IList<int> FindDisappearedNumbers(int[] nums)
     return l;
 }
 
+// https://leetcode.com/problems/find-all-duplicates-in-an-array/
+IList<int> FindDuplicates(int[] nums)
+{
+    var list = new List<int>();
+
+    for (var i = 0; i < nums.Length; i++)
+    {
+        var n = Math.Abs(nums[i]);
+        nums[n - 1] = -1 * nums[n - 1];
+
+        if (nums[n - 1] > 0)
+        {
+            list.Add(n);
+        }
+    }
+
+    return list;
+}
+
+// https://leetcode.com/problems/pascals-triangle/
 IList<IList<int>> Generate(int numRows)
 {
     var result = new List<IList<int>>
@@ -580,6 +759,7 @@ IList<IList<int>> Generate(int numRows)
     return result;
 }
 
+// https://leetcode.com/problems/pascals-triangle-ii/
 IList<int> GetRow(int rowIndex)
 {
     var current = new[] { 1 };
@@ -606,6 +786,7 @@ IList<int> GetRow(int rowIndex)
     return current;
 }
 
+// https://leetcode.com/problems/sequential-digits/
 IList<int> SequentialDigits(int low, int high)
 {
     var digits = "123456789";
@@ -640,6 +821,7 @@ IList<int> SequentialDigits(int low, int high)
     }
 }
 
+// https://leetcode.com/problems/product-of-array-except-self/
 int[] ProductExceptSelf(int[] nums)
 {
     var result = new int[nums.Length];
@@ -661,6 +843,7 @@ int[] ProductExceptSelf(int[] nums)
     return result;
 }
 
+// https://leetcode.com/problems/gas-station/
 int CanCompleteCircuit(int[] gas, int[] cost)
 {
     var position = -1;
@@ -683,6 +866,7 @@ int CanCompleteCircuit(int[] gas, int[] cost)
     return total >= 0 ? position + 1 : -1;
 }
 
+// https://leetcode.com/problems/rotate-array/description/
 void Rotate(int[] nums, int k)
 {
     var l = k % nums.Length;
@@ -701,6 +885,7 @@ void Rotate(int[] nums, int k)
     }
 }
 
+// https://leetcode.com/problems/minimum-domino-rotations-for-equal-row/
 int MinDominoRotations(int[] tops, int[] bottoms)
 {
     var length = tops.Length;
@@ -748,6 +933,7 @@ int MinDominoRotations(int[] tops, int[] bottoms)
     }
 }
 
+// https://leetcode.com/problems/subarray-product-less-than-k/
 int NumSubarrayProductLessThanK(int[] nums, int k)
 {
     if (k <= 1)
@@ -774,6 +960,7 @@ int NumSubarrayProductLessThanK(int[] nums, int k)
     return count;
 }
 
+// https://leetcode.com/problems/jump-game-iii/
 bool CanReach(int[] arr, int start)
 {
     var n = arr.Length;
@@ -827,6 +1014,7 @@ int FindPairs(int[] nums, int k)
     return k == 0 ? dictionary.Count(q => q.Value >= 2) : dictionary.Count(q => dictionary.ContainsKey(q.Key + k));
 }
 
+// https://leetcode.com/problems/degree-of-an-array/
 int FindShortestSubArray(int[] nums)
 {
     var counters = nums.GroupBy(q => q).ToDictionary(q => q.Key, q => q.Count());
@@ -857,6 +1045,7 @@ int FindShortestSubArray(int[] nums)
     return answer;
 }
 
+// https://leetcode.com/problems/majority-element/
 int MajorityElement(int[] nums)
 {
     var counter = 0;
@@ -884,7 +1073,24 @@ int MajorityElement(int[] nums)
     return major;
 }
 
+// https://leetcode.com/problems/house-robber/
 int Rob(int[] nums)
+{
+    var prev1 = 0;
+    var prev2 = 0;
+
+    foreach (var num in nums)
+    {
+        var dp = Math.Max(prev1, prev2 + num);
+        prev2 = prev1;
+        prev1 = dp;
+    }
+
+    return prev1;
+}
+
+// https://leetcode.com/problems/house-robber-ii/
+int Rob2(int[] nums)
 {
     return nums.Length == 1 ? nums[0] : Math.Max(RobRange(0, nums.Length - 1), RobRange(1, nums.Length));
 
@@ -904,6 +1110,7 @@ int Rob(int[] nums)
     }
 }
 
+// https://leetcode.com/problems/maximum-product-subarray/
 int MaxProduct(int[] nums)
 {
     var min = 1;
@@ -921,6 +1128,7 @@ int MaxProduct(int[] nums)
     return result;
 }
 
+// https://leetcode.com/problems/group-anagrams/
 IList<IList<string>> GroupAnagrams(string[] strs)
 {
     var dictionary = new Dictionary<string, IList<string>>();
@@ -947,6 +1155,7 @@ IList<IList<string>> GroupAnagrams(string[] strs)
     }
 }
 
+// https://leetcode.com/problems/132-pattern/
 bool Find132pattern(int[] nums)
 {
     var possible3rd = new Stack<int>();
@@ -972,6 +1181,7 @@ bool Find132pattern(int[] nums)
     return false;
 }
 
+// https://leetcode.com/problems/longest-substring-without-repeating-characters/
 int LengthOfLongestSubstring_New(string s)
 {
     var hash = new HashSet<char>();
@@ -998,6 +1208,7 @@ int LengthOfLongestSubstring_New(string s)
     return answer;
 }
 
+// https://leetcode.com/problems/first-missing-positive/
 int FirstMissingPositive(int[] nums)
 {
     var j = 0;
@@ -1033,6 +1244,7 @@ int FirstMissingPositive(int[] nums)
     return numsLength - j + 1;
 }
 
+// https://leetcode.com/problems/sliding-window-maximum/
 int[] MaxSlidingWindow(int[] nums, int k)
 {
     var maxValues = new List<int>();
@@ -1062,6 +1274,7 @@ int[] MaxSlidingWindow(int[] nums, int k)
     return maxValues.ToArray();
 }
 
+// https://leetcode.com/problems/add-to-array-form-of-integer/
 IList<int> AddToArrayForm(int[] num, int k)
 {
     var carry = k;
@@ -1095,6 +1308,7 @@ IList<int> AddToArrayForm(int[] num, int k)
     return carryList.ToArray();
 }
 
+// https://leetcode.com/problems/sqrtx/
 int MySqrt(int x)
 {
     var left = 1;
@@ -1123,6 +1337,7 @@ int MySqrt(int x)
     return right;
 }
 
+// https://leetcode.com/problems/missing-number/description/
 int MissingNumber(int[] nums)
 {
     var x = nums.Length;
@@ -1363,6 +1578,7 @@ IList<IList<int>> ZigzagLevelOrder(TreeNode? root)
 TreeNode? SortedArrayToBST(int[] nums)
     => nums.Length == 0 ? null : BuildTreeBySorted(nums, 0, nums.Length - 1);
 
+// https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree
 TreeNode? BuildTreeBySorted(int[] nums, int left, int right)
 {
     if (left > right)
@@ -1782,7 +1998,6 @@ void MaximumCost()
     Console.WriteLine(string.Join(' ', stack));
 }
 
-
 // https://coderun.yandex.ru/problem/knight-move
 void KnightMove()
 {
@@ -1873,7 +2088,6 @@ void Cafe()
     }
 }
 
-
 // https://leetcode.com/problems/validate-binary-search-tree
 bool IsValidBST(TreeNode? root)
 {
@@ -1904,7 +2118,6 @@ bool IsValidBST(TreeNode? root)
 
     return true;
 }
-
 
 // https://leetcode.com/problems/path-sum/description/
 bool HasPathSum(TreeNode? root, int targetSum)
@@ -2151,7 +2364,6 @@ bool IsPalindrome(string s)
     return true;
 }
 
-
 // https://leetcode.com/problems/trapping-rain-water
 int Trap(int[] height)
 {
@@ -2179,8 +2391,6 @@ int Trap(int[] height)
 
     return sum;
 }
-
-ThreeSum([-1, 0, 1, 2, -1, -4]);
 
 // https://leetcode.com/problems/3sum/
 IList<IList<int>> ThreeSum(int[] nums)
@@ -2254,4 +2464,33 @@ int MaxSubArray(int[] nums)
     }
 
     return max;
+}
+
+// https://leetcode.com/problems/subarray-sum-equals-k/
+int SubarraySum(int[] nums, int k)
+{
+    var ans = 0;
+    var map = new Dictionary<int, int>
+    {
+        [0] = 1
+    };
+
+    var sum = 0;
+    for (var i = 0; i < nums.Length; i++)
+    {
+        sum += nums[i];
+        if (map.TryGetValue(sum - k, out var count))
+        {
+            ans += count;
+        }
+
+        if (!map.ContainsKey(sum))
+        {
+            map[sum] = 0;
+        }
+
+        map[sum]++;
+    }
+
+    return ans;
 }
