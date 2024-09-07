@@ -240,7 +240,7 @@ string LongestCommonPrefix(string[] strs)
     var prefix = strs[0];
     for (var i = 1; i < strs.Length; i++)
     {
-        while (strs[i].StartsWith(prefix, StringComparison.Ordinal))
+        while (strs[i].IndexOf(prefix, StringComparison.Ordinal) != 0)
         {
             prefix = prefix[..^1];
 
@@ -620,7 +620,7 @@ IList<bool> KidsWithCandies(int[] candies, int extraCandies)
     return candies.Select(q => q + extraCandies >= max).ToList();
 }
 
-// https://leetcode.com/submissions/detail/1369647865/
+// https://leetcode.com/problems/average-salary-excluding-the-minimum-and-maximum-salary
 double Average(int[] salary)
 {
     var max = salary.Max();
@@ -1002,6 +1002,7 @@ bool CanReach(int[] arr, int start)
     return false;
 }
 
+// https://leetcode.com/problems/k-diff-pairs-in-an-array
 int FindPairs(int[] nums, int k)
 {
     if (nums.Length == 0 || k < 0)
@@ -1497,18 +1498,18 @@ IList<IList<int>> LevelOrder(TreeNode? root)
 
     stack.Push((root, 0));
 
-    var dictionary = new List<IList<int>>();
+    var list = new List<IList<int>>();
 
     while (stack.Count > 0)
     {
         (var node, var level) = stack.Pop();
 
-        if (dictionary.Count == level)
+        if (list.Count == level)
         {
-            dictionary.Add([]);
+            list.Add([]);
         }
 
-        dictionary[level].Add(node.val);
+        list[level].Add(node.val);
 
         var nextLevel = level + 1;
 
@@ -1523,7 +1524,7 @@ IList<IList<int>> LevelOrder(TreeNode? root)
         }
     }
 
-    return dictionary;
+    return list;
 }
 
 // https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/
@@ -2493,4 +2494,57 @@ int SubarraySum(int[] nums, int k)
     }
 
     return ans;
+}
+
+// https://leetcode.com/problems/climbing-stairs/
+int ClimbStairs(int n)
+{
+    if (n == 1)
+    {
+        return 1;
+    }
+    var left = 1;
+    var right = 1;
+
+    for (var i = 0; i < n - 2; i++)
+    {
+        var t = left + right;
+        left = right;
+        right = t;
+    }
+
+    return right;
+}
+
+CombinationSum([2, 3, 6, 7], 7);
+
+// https://leetcode.com/problems/combination-sum/
+IList<IList<int>> CombinationSum(int[] candidates, int target)
+{
+    var result = new List<IList<int>>();
+
+    Helper([], 0, target);
+
+    void Helper(List<int> current, int start, int remain)
+    {
+        if (remain == 0)
+        {
+            result.Add(new List<int>(current));
+            return;
+        }
+
+        if (remain < 0)
+        {
+            return;
+        }
+
+        for (var i = start; i < candidates.Length; i++)
+        {
+            current.Add(candidates[i]);
+            Helper(current, i, remain - candidates[i]);
+            current.RemoveAt(current.Count - 1);
+        }
+    }
+
+    return result;
 }
