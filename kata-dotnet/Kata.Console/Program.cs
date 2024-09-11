@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 using Kata.Console;
 
 #region Helpers
@@ -2516,8 +2517,6 @@ int ClimbStairs(int n)
     return right;
 }
 
-CombinationSum([2, 3, 6, 7], 7);
-
 // https://leetcode.com/problems/combination-sum/
 IList<IList<int>> CombinationSum(int[] candidates, int target)
 {
@@ -2547,4 +2546,90 @@ IList<IList<int>> CombinationSum(int[] candidates, int target)
     }
 
     return result;
+}
+
+// https://leetcode.com/problems/convert-bst-to-greater-tree/
+TreeNode? ConvertBST(TreeNode? root)
+{
+    var sum = 0;
+
+    var stack = new Stack<TreeNode>();
+
+    if (root == null)
+    {
+        return root;
+    }
+
+    AddToStack(root);
+
+    while (stack.Count > 0)
+    {
+        var currentNode = stack.Pop();
+        sum += currentNode.val;
+        currentNode.val = sum;
+        AddToStack(currentNode.left);
+    }
+
+    return root;
+
+    void AddToStack(TreeNode? node)
+    {
+        while (node != null)
+        {
+            stack.Push(node);
+            node = node.right;
+        }
+    }
+
+    /* // Валидное решение через рекурсию reverse inorder traversal
+    var sum = 0;
+
+    Convert(root);
+    return root;
+
+    void Convert(TreeNode? node)
+    {
+        if (node == null)
+        {
+            return;
+        }
+
+        Convert(node.right);
+        sum += node.val;
+        node.val = sum;
+        Convert(node.left);
+    }*/
+}
+
+AverageOfSubtree(BuildTreeFromString("[4,8,5,0,1,null,6]"));
+
+// https://leetcode.com/problems/count-nodes-equal-to-average-of-subtree
+int AverageOfSubtree(TreeNode? root)
+{
+    var result = 0;
+
+    PostOrder(root);
+
+    return result;
+
+    (int, int) PostOrder(TreeNode? node)
+    {
+        if (node == null)
+        {
+            return (0, 0);
+        }
+
+        (var leftSum, var leftCount) = PostOrder(node.left);
+        (var rightSum, var rightCount) = PostOrder(node.right);
+
+        var currentSum = leftSum + rightSum + node.val;
+        var currentCount = leftCount + rightCount + 1;
+
+        if (currentSum / currentCount == node.val)
+        {
+            result++;
+        }
+
+        return (currentSum, currentCount);
+    }
 }
