@@ -2,21 +2,19 @@
 #pragma warning disable CA1854 // Prefer the 'IDictionary.TryGetValue(TKey, out TValue)' method
 #pragma warning disable CA1311 // Specify a culture or use an invariant version
 
+using Kata.Console;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
-using System.Xml.Linq;
-using System.Xml.Serialization;
-using Kata.Console;
 
 #region Helpers
 
 List<int?> ParseTreeNodeStrIntoValueArray(string treeNodeStr)
 {
-    List<int?> valueArray = [];
+    List<int?> valueArray = []
+    ;
 
     treeNodeStr = treeNodeStr.ToLower();
     var valueListStr = treeNodeStr.Trim(' ', '[', ']');
@@ -74,10 +72,10 @@ static void Debugify<T>(IEnumerable<T> list, string glue = "\n")
 
 // https://leetcode.com/problems/merge-sorted-array/
 void MergeSortedArray(
-        int[] nums1,
-        int m,
-        int[] nums2,
-        int n)
+    int[] nums1,
+    int m,
+    int[] nums2,
+    int n)
 {
     var last = m + n - 1;
     var i = m - 1;
@@ -734,7 +732,8 @@ IList<IList<int>> Generate(int numRows)
 
     if (numRows == 1)
     {
-        return [result[0]];
+        return [result [
+        0]];
     }
 
     if (numRows == 2)
@@ -1143,7 +1142,8 @@ IList<IList<string>> GroupAnagrams(string[] strs)
         }
         else
         {
-            dictionary[key] = [str];
+            dictionary[key] = [str]
+            ;
         }
     }
 
@@ -1494,7 +1494,8 @@ IList<IList<int>> LevelOrder(TreeNode? root)
 
     if (root == null)
     {
-        return [];
+        return []
+        ;
     }
 
     stack.Push((root, 0));
@@ -1535,7 +1536,8 @@ IList<IList<int>> ZigzagLevelOrder(TreeNode? root)
 
     if (root == null)
     {
-        return [];
+        return []
+        ;
     }
 
     stack.Push((root, 0));
@@ -1817,6 +1819,7 @@ int[] IntersectSortedArrays(int[] nums1, int[] nums2)
 
     return result.ToArray();
 }
+
 // https://coderun.yandex.ru/problem/lite-operating-systems
 int OperationSystemsCount(int m, (int Start, int End)[] sectors)
 {
@@ -1862,7 +1865,8 @@ int[][] Merge(int[][] intervals)
 
     result.Add([accumulator.Start, accumulator.End]);
 
-    return [.. result];
+    return [
+    .. result];
 }
 
 /*
@@ -1933,7 +1937,6 @@ void MaximumCost()
             matrix[i, j] = line[j];
         }
     }
-
 
     var cost = new int[n, m];
 
@@ -2035,19 +2038,18 @@ void Cafe()
 
     var dp = new int[N, N];
 
-    for (int i = 0; i <= n; i++)
+    for (var i = 0; i <= n; i++)
     {
-        for (int j = 0; j <= n; j++)
+        for (var j = 0; j <= n; j++)
         {
             dp[i, j] = inf;
         }
     }
 
-
     dp[0, 0] = 0;
-    for (int i = 1; i <= n; i++)
+    for (var i = 1; i <= n; i++)
     {
-        for (int j = 0; j <= i; j++)
+        for (var j = 0; j <= i; j++)
         {
             dp[i, j] = Math.Min(dp[i, j], dp[i - 1, j] + array[i]);
             if (array[i] > 100)
@@ -2067,19 +2069,18 @@ void Cafe()
     }
 
     var ans = inf;
-    for (int j = 0; j <= n; j++)
+    for (var j = 0; j <= n; j++)
     {
         ans = Math.Min(ans, dp[n, j]);
     }
-
 
     Console.WriteLine(ans);
 
     void PrintMatrix(int[,] matrix)
     {
-        for (int i = 0; i < matrix.GetLength(0); i++)
+        for (var i = 0; i < matrix.GetLength(0); i++)
         {
-            for (int j = 0; j < matrix.GetLength(1); j++)
+            for (var j = 0; j < matrix.GetLength(1); j++)
             {
                 Console.Write($"{matrix[i, j]:G}");
                 Console.Write(' ');
@@ -2108,6 +2109,7 @@ bool IsValidBST(TreeNode? root)
             stack.Push(root);
             root = root.left;
         }
+
         var node = stack.Pop();
         if (previous != null && previous.val >= node.val)
         {
@@ -2133,6 +2135,7 @@ bool HasPathSum(TreeNode? root, int targetSum)
     {
         return targetSum == root.val;
     }
+
     var newTarget = targetSum - root.val;
     return HasPathSum(root.left, newTarget) || HasPathSum(root.right, newTarget);
 }
@@ -2158,12 +2161,14 @@ int MaxPathSum(TreeNode? root)
     Helper(root);
 
     return answer;
+
     int Helper(TreeNode? node)
     {
         if (node == null)
         {
             return 0;
         }
+
         var maxLeft = Math.Max(Helper(node.left), 0);
         var maxRight = Math.Max(Helper(node.right), 0);
         answer = Math.Max(answer, maxLeft + maxRight + node.val);
@@ -2180,7 +2185,12 @@ bool IsValid(string s)
         return false;
     }
 
-    var brackets = new Dictionary<char, char> { { '{', '}' }, { '(', ')' }, { '[', ']' } };
+    var brackets = new Dictionary<char, char>
+    {
+        { '{', '}' },
+        { '(', ')' },
+        { '[', ']' }
+    };
     var stack = new Stack<char>();
     foreach (var symbol in s)
     {
@@ -2274,7 +2284,6 @@ int NumIslands(char[][] grid)
         }
     }
 
-
     var answer = 0;
 
     for (var i = 0; i < n; i++)
@@ -2359,6 +2368,7 @@ bool IsPalindrome(string s)
         {
             return false;
         }
+
         l++;
         r--;
     }
@@ -2410,7 +2420,8 @@ IList<IList<int>> ThreeSum(int[] nums)
         return result;
     }
 
-    nums = [.. nums.Order()];
+    nums = [
+    .. nums.Order()];
     for (var i = 0; i < nums.Length - 3; i++)
     {
         if (i == 0 || i > 0 && nums[i] != nums[i - 1])
@@ -2428,8 +2439,8 @@ IList<IList<int>> ThreeSum(int[] nums)
                     while (left < right && nums[left] == nums[left + 1])
                     {
                         left++;
-
                     }
+
                     while (left < right && nums[right] == nums[right - 1])
                     {
                         right--;
@@ -2459,7 +2470,7 @@ int MaxSubArray(int[] nums)
     var current = nums[0];
     var max = nums[0];
 
-    for (int i = 1; i < nums.Length; i++)
+    for (var i = 1; i < nums.Length; i++)
     {
         current = Math.Max(nums[i], current + nums[i]);
         max = Math.Max(max, current);
@@ -2472,10 +2483,7 @@ int MaxSubArray(int[] nums)
 int SubarraySum(int[] nums, int k)
 {
     var ans = 0;
-    var map = new Dictionary<int, int>
-    {
-        [0] = 1
-    };
+    var map = new Dictionary<int, int> { [0] = 1 };
 
     var sum = 0;
     for (var i = 0; i < nums.Length; i++)
@@ -2504,6 +2512,7 @@ int ClimbStairs(int n)
     {
         return 1;
     }
+
     var left = 1;
     var right = 1;
 
@@ -2632,4 +2641,180 @@ int AverageOfSubtree(TreeNode? root)
 
         return (currentSum, currentCount);
     }
+}
+
+// https://www.codewars.com/kata/57e5279b7cf1aea5cf000359
+// решение, которое прошло
+int MaxSum(TreeNode? root)
+{
+    if (root == null)
+    {
+        return 0;
+    }
+
+    if (root.left != null && root.right == null)
+    {
+        return MaxSum(root.left) + root.val;
+    }
+
+    if (root.left == null && root.right != null)
+    {
+        return MaxSum(root.right) + root.val;
+    }
+
+    return Math.Max(MaxSum(root.left), MaxSum(root.right)) + root.val;
+}
+
+// https://www.codewars.com/kata/57e5279b7cf1aea5cf000359
+// решение, которое красивое
+int MaxSumBeauty(TreeNode? root)
+    => root switch
+    {
+        null => 0,
+        { left: null, right: null, val: var v } => v,
+        { left: null, right: var r, val: var v } => v + MaxSumBeauty(r),
+        { left: var l, right: null, val: var v } => v + MaxSumBeauty(l),
+        { left: var l, right: var r, val: var v } => v + Math.Max(MaxSumBeauty(l), MaxSumBeauty(r))
+    };
+
+// https://www.codewars.com/kata/5800580f8f7ddaea13000025
+int SumTree(TreeNode? root)
+    => root switch
+    {
+        null => 0,
+        _ => root.val + SumTree(root.left) + SumTree(root.right)
+    };
+
+
+string Longest(string s1, string s2) => new string(s1.ToCharArray().Concat(s2.ToCharArray()).Distinct().Order().ToArray());
+
+// https://www.codewars.com/kata/57e5a6a67fbcc9ba900021cd
+TreeNode? ArrayToTree(int[] array)
+{
+    return array.Length == 0 ? null : BuildTree(0);
+
+    TreeNode? BuildTree(int index)
+        => index >= array.Length ? null : new TreeNode(array[index], BuildTree(2 * index + 1), BuildTree(2 * index + 2));
+}
+
+// https://leetcode.com/problems/integer-to-roman
+string IntToRoman(int num)
+{
+    (int Value, string Roman)[] values = [
+        (1000, "M"), (900, "CM"), (500, "D"),
+        (400, "CD"), (100, "C"), (90, "XC"),
+        (50, "L"), (40, "XL"), (10, "X"),
+        (9, "IX"), (5, "V"), (4, "IV"), (1, "I")];
+
+    var stringBuilder = new StringBuilder();
+
+    for (var i = 0; i < values.Length; i++)
+    {
+        while (num >= values[i].Value)
+        {
+            num -= values[i].Value;
+            stringBuilder.Append(values[i].Roman);
+        }
+    }
+
+    return stringBuilder.ToString();
+}
+
+
+// Последовательно идущие единицы
+void Temp1()
+{
+    var array = new byte[int.Parse(Console.ReadLine()!)];
+
+    for (var i = 0; i < array.Length; i++)
+    {
+        array[i] = byte.Parse(Console.ReadLine()!);
+    }
+
+    var maxLength = 0;
+    var current = 0;
+
+    for (var index = 0; index < array.Length; index++)
+    {
+        if (array[index] == 1)
+        {
+            current++;
+
+            maxLength = System.Math.Max(maxLength, current);
+        }
+        else
+        {
+            current = 0;
+        }
+    }
+
+    Console.WriteLine(maxLength);
+}
+
+Temp();
+
+
+void Temp2()
+{
+    var n = int.Parse(Console.ReadLine());
+
+    if (n == 0)
+    {
+        return;
+    }
+
+    var prev = int.Parse(Console.ReadLine());
+    Console.WriteLine(prev);
+
+    for (var i = 1; i < n; i++)
+    {
+        var current = int.Parse(Console.ReadLine());
+
+        if (prev == current)
+        {
+            continue;
+        }
+
+        prev = current;
+        Console.WriteLine(current);
+    }
+}
+
+void Temp()
+{
+    var line = Console.ReadLine().Split(' ');
+    var left = line[0];
+    var right = line[1];
+
+    if (left.Length != right.Length)
+    {
+        Console.WriteLine(0);
+        return;
+    }
+
+    var leftDictionary = left.GroupBy(symbol => symbol).ToDictionary(group => group.Key, group => group.Count());
+    var rightDictionary = right.GroupBy(symbol => symbol).ToDictionary(group => group.Key, group => group.Count());
+
+    if (leftDictionary.Count != rightDictionary.Count)
+    {
+        Console.WriteLine(0);
+        return;
+    }
+
+    foreach (var item in leftDictionary)
+    {
+        if (rightDictionary.TryGetValue(item.Key, out var value) && value == item.Value)
+        {
+            if (value != item.Value)
+            {
+                Console.WriteLine(0);
+                return;
+            }
+        }
+
+        Console.WriteLine(0);
+        return;
+    }
+
+    Console.WriteLine(1);
 }
